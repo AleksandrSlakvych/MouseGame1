@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ConsoleGraphics.cs">
+      <HintPath>..\..\..\..\Downloads\ClassWork 01.06.19-20190601T193204Z-001\ClassWork 01.06.19\List2-20190525T071035Z-001\List2\List2\ConsoleGraphics.cs.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
