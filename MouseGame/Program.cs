@@ -7,19 +7,29 @@ using System.Threading.Tasks;
 
 namespace MouseGame
 {
+    delegate void EventHandler(Button e);
+
+    class EventArgs
+    {
+        public int X { get; set; }
+        public int Y  { get; set; }
+
+        public EventArgs(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+    }
+
     public interface IUiComponent
     {
         void Draw(ConsoleGraphics g);
     }
-
-    public class EventButtonArgs : EventArgs
+    
+    class Button : IUiComponent
     {
-        public int X { get; set; }
-        public int Y { get; set; }
-    }
+        public event EventHandler ChangePosition;
 
-    public class Button : IUiComponent
-    {
         public int x, y;
         public int sizeW = 30, sizeH = 30;
 
@@ -33,18 +43,14 @@ namespace MouseGame
         {
             if (Input.IsMouseLeftButtonDown)
             {
-                OnLeftButtonClickOn?.Invoke(this.x, this.y);
-                OnLeftButtonClickMessage(this.x, this.y);
-                //OnLeftButtonClick?.Invoke(this, new EventButtonArgs { X = this.x, Y = this.y });
+                ChangePosition?.Invoke(this) ;
             }
             g.FillRectangle(0xff00ff00, x, y, sizeW, sizeH);
         }
 
-        //public event EventHandler<EventButtonArgs> OnLeftButtonClick;
+       
 
-        public event Func<int,int, int> OnLeftButtonClickOn;
-
-        public event Action<int, int> OnLeftButtonClickMessage;
+        
     }
     class Program
     {
@@ -56,15 +62,7 @@ namespace MouseGame
             var secondbutton = new Button(50, 50);
             components.Add(firstbutton);
             components.Add(secondbutton);
-
-            Func<int, int, int> func = (x, y) => { x = Input.MouseX; y = Input.MouseY; return x;  };
-
-            Action<int, int> action = (x, y) => { x = Input.MouseX; y = Input.MouseY;  };
-
-            firstbutton.OnLeftButtonClickMessage += action;
-            firstbutton.OnLeftButtonClickOn += func;
-
-            //firstbutton.OnLeftButtonClick += Firstbutton_OnLeftButtonClick;
+            firstbutton.ChangePosition += Firstbutton_ChangePosition;
             while (true)
             {
                 foreach (var component in components)
@@ -79,11 +77,10 @@ namespace MouseGame
 
         }
 
-
-        private static void Firstbutton_OnLeftButtonClick(object sender, EventButtonArgs eventButton)
+        static void Firstbutton_ChangePosition(Button e)
         {
-            eventButton.X += 10;
-            eventButton.Y += 10;
+            e.x = Input.MouseX;
+            e.y= Input.MouseY;
         }
     }
 
